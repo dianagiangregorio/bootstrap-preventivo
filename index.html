@@ -61,7 +61,7 @@
                 <p>Compila il form per richiedere un preventivo per i nostri servizi di sviluppo</p>
                 <form class="row g-3" id="calculator-form">
                     <div class="col-md-12">
-                        <label for="input-name" class="form-label">Nome</label>
+                        <label for="input-name" class="form-label" id="name">Nome</label>
                         <input type="name" class="form-control" id="input-name">
                     </div>
                     <div class="col-md-12">
@@ -74,8 +74,8 @@
                     </div>
                     <div class="col-md-12">
                         <label for="job-type" class="form-label">Tipo di lavoro</label>
-                        <select id="job-type" class="form-select">
-                            <option selected>Seleziona il tipo di lavoro</option>
+                        <select id="job-type" class="form-select" required>
+                            <option value="" disabled selected>Seleziona il tipo di lavoro</option>
                             <option value="1">Backend Development</option>
                             <option value="2">Frontend Development</option>
                             <option value="3">Project Analysis</option>
@@ -98,8 +98,12 @@
                         </div>
                     </div>
                     <div class="mb-5 d-flex justify-content-evenly col-12 pt-4">
-                        <button type="submit" class="btn btn-primary">Calcola preventivo</button>
-                        <span class="fs-5 fw-bold">Prezzo finale</span>
+                        <button type="submit" class="m-auto btn btn-primary btn-lg">Calcola preventivo</button>
+                        <div class="d-none fs-5 fw-bold text-center" id="price-container">
+                            <p class="fs-5 fw-bold">Prezzo finale</p>
+                            <p class="fs-5 fw-bold" id="promo-container"></p>
+                            <p class="d-inline-flex fs-3 fw-bold" id="final-price"></p><p class="d-inline-flex fs-3 fw-light text-secondary" id="decimals"></p>
+                        </div>
                     </div>
                 </form>
             </div>

@@ -4,8 +4,20 @@ const calculatorForm = document.getElementById('calculator-form');
 
 //creo delle variabili per i campi del form
 
+const userName = document.getElementById("input-name")
+const userSurname = document.getElementById("input-surname")
+const userEmail = document.getElementById("email")
+const userTextArea = document.getElementById("textarea")
 const jobType = document.getElementById("job-type");
 const codeToCheck = document.getElementById("promo-code");
+
+//creo una variabile dove mostrerò il prezzo
+
+const priceContainer = document.getElementById("price-container")
+const promoContainer = document.getElementById("promo-container")
+const price = document.getElementById("final-price");
+const decimals = document.getElementById("decimals")
+
 
 //creo un array con i codici promozionali validi
 
@@ -27,30 +39,56 @@ calculatorForm.addEventListener('submit', function (event) {
 
     //calcolo il prezzo orario per il tipo di lavoro selezionato dall'utente
 
+    let totalJobPrice = jobPrice (jobHours, backendHourPrice)
+
     if (jobType.value === '1'){
-        jobPrice(jobHours, backendHourPrice);
+        totalJobPrice = jobPrice(jobHours, backendHourPrice);
     }
     else if (jobType.value === '2'){
-        jobPrice(jobHours, frontendHourPrice);
+        totalJobPrice = jobPrice(jobHours, frontendHourPrice);
     }
     else {
-        jobPrice(jobHours, analysisHourPrice);
+        totalJobPrice = jobPrice(jobHours, analysisHourPrice);
     }
         
     //controllo se l'utente ha inserito un codice sconto e calcolo il prezzo finale
 
+
     if (promoCode(validPromoCode, codeToCheck.value)) {
         const finalPrice = totalJobPrice - ((totalJobPrice * 25)/100);
-        console.log(finalPrice);
+        const arrayPrice = (fixedPrice(finalPrice)).split(',');
+        price.innerHTML = `€ ${arrayPrice[0]}`;
+        decimals.innerHTML = `,${arrayPrice[1]}`;
+        priceContainer.classList.remove("d-none");
+
+
     }
     else if (codeToCheck.value === '') {
-        const finalPrice = totalJobPrice;
+        const finalPrice = fixedPrice(totalJobPrice);
+        const arrayPrice = finalPrice.split(',');
+        promoContainer.innerHTML = "Non hai inserito il codice";
+        price.innerHTML = `€ ${arrayPrice[0]}`;
+        decimals.innerHTML = `,${arrayPrice[1]}`;
         console.log(`Non hai inserito il codice ${finalPrice}`);
+        priceContainer.classList.remove("d-none");
     }
     else {
-        const finalPrice = totalJobPrice
-        console.log(`Il codice inserito non è corretto ${finalPrice}`)
+        const finalPrice = fixedPrice(totalJobPrice);
+        const arrayPrice = finalPrice.split(',');
+        promoContainer.innerHTML = "Il codice inserito non è corretto";
+        price.innerHTML = `€ ${arrayPrice[0]}`;
+        decimals.innerHTML = `,${arrayPrice[1]}`;
+        console.log(`Il codice inserito non è corretto ${finalPrice}`);
+        priceContainer.classList.remove("d-none");
     }
+
+    //dopo tutte le operazioni resetto il form
+    userName.value = '';
+    userSurname.value = '';
+    userEmail.value = '';
+    userTextArea.value = '';
+    jobType.value = '';
+    codeToCheck.value = '';
 
 })
 
@@ -75,4 +113,15 @@ function jobPrice (hoursToJob, pricePerHour) {
  */
 function promoCode (arrayPromoCode, codeToCheck) {
     return arrayPromoCode.includes(codeToCheck)
+}
+
+/**
+ * funzione per avere solo due cire decimali divise da una virgola
+ * @param {number} price
+ * @returns {string}
+ */
+function fixedPrice (price) {
+    let correctPrice = price.toFixed(2);
+    priceToString = correctPrice.toString().replace('.', ',')
+    return priceToString
 }
