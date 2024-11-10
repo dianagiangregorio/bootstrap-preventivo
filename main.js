@@ -2,6 +2,7 @@
 
 const calculatorForm = document.getElementById('calculator-form');
 
+
 //creo delle variabili per i campi del form
 
 const userName = document.getElementById("input-name")
@@ -10,8 +11,10 @@ const userEmail = document.getElementById("email")
 const userTextArea = document.getElementById("textarea")
 const jobType = document.getElementById("job-type");
 const codeToCheck = document.getElementById("promo-code");
+const gridCheck = document.getElementById("grid-check")
 
-//creo una variabile dove mostrerò il prezzo
+
+//creo una variabile per mostrare il prezzo in pagina
 
 const priceContainer = document.getElementById("price-container")
 const promoContainer = document.getElementById("promo-container")
@@ -21,8 +24,8 @@ const decimals = document.getElementById("decimals")
 
 //creo un array con i codici promozionali validi
 
-const validPromoCode = ['YHDNU32',
-    'JANJC63', 'PWKCN25', 'SJDPO96', 'POCIE24'];
+const validPromoCode = ['YHDNU32', 'JANJC63', 'PWKCN25', 'SJDPO96', 'POCIE24'];
+
 
 //creo le variabili per il numero di ore per lavoro e il prezzo orario di ogni lavoro
 
@@ -37,14 +40,12 @@ const analysisHourPrice = 33.60
 calculatorForm.addEventListener('submit', function (event) {
     event.preventDefault();
 
-    // checkName(userName.value);
-    // checkName(userSurname.value);
-
+//controllo se i dati che l'utente ha inserito sono scritti correttamente
     if (checkName(userName.value) === true && checkName(userSurname.value) === true && checkEmail(userEmail.value) === true) {
 
 
-
         //calcolo il prezzo orario per il tipo di lavoro selezionato dall'utente
+
 
         let totalJobPrice = jobPrice(jobHours, backendHourPrice)
 
@@ -64,6 +65,7 @@ calculatorForm.addEventListener('submit', function (event) {
         if (promoCode(validPromoCode, codeToCheck.value)) {
             const finalPrice = totalJobPrice - ((totalJobPrice * 25) / 100);
             const arrayPrice = (fixedPrice(finalPrice)).split(',');
+            promoContainer.innerHTML = "É stato applicato lo sconto del 25%";
             price.innerHTML = `€ ${arrayPrice[0]}`;
             decimals.innerHTML = `,${arrayPrice[1]}`;
             priceContainer.classList.remove("d-none");
@@ -73,10 +75,8 @@ calculatorForm.addEventListener('submit', function (event) {
         else if (codeToCheck.value === '') {
             const finalPrice = fixedPrice(totalJobPrice);
             const arrayPrice = finalPrice.split(',');
-            promoContainer.innerHTML = "Non hai inserito il codice";
-            price.innerHTML = `&euro; ${arrayPrice[0]}`;
+            price.innerHTML = `€ ${arrayPrice[0]}`;
             decimals.innerHTML = `,${arrayPrice[1]}`;
-            console.log(`Non hai inserito il codice ${finalPrice}`);
             priceContainer.classList.remove("d-none");
         }
         else {
@@ -85,20 +85,12 @@ calculatorForm.addEventListener('submit', function (event) {
             promoContainer.innerHTML = "Il codice inserito non è corretto";
             price.innerHTML = `€ ${arrayPrice[0]}`;
             decimals.innerHTML = `,${arrayPrice[1]}`;
-            console.log(`Il codice inserito non è corretto ${finalPrice}`);
             priceContainer.classList.remove("d-none");
         }
-
-        // //dopo tutte le operazioni resetto il form
-        // userName.value = '';
-        // userSurname.value = '';
-        // userEmail.value = '';
-        // userTextArea.value = '';
-        // jobType.value = '';
-        // codeToCheck.value = '';
     }
+    //se i campi inseriti non sono corretti compare un alert di errore
     else {
-        alert ('i campi inseriti non sono corretti')
+        alert ('I campi inseriti non sono corretti')
     }
         //dopo tutte le operazioni resetto il form
         userName.value = '';
@@ -107,13 +99,14 @@ calculatorForm.addEventListener('submit', function (event) {
         userTextArea.value = '';
         jobType.value = '';
         codeToCheck.value = '';
+        gridCheck.value = '';
 })
 
 //FUNZIONI
 
 
 /**
- * calcola il prezzo totale di un determinato lavoro
+ * funzione per calcolare il prezzo totale di un determinato lavoro
  * @param {number} hoursToJob
  * @param {number} pricePerHour
  * @returns {number}
@@ -129,7 +122,8 @@ function jobPrice(hoursToJob, pricePerHour) {
  * @returns {boolean}
  */
 function promoCode(arrayPromoCode, codeToCheck) {
-    return arrayPromoCode.includes(codeToCheck)
+    let upperCaseCode = codeToCheck.toUpperCase(); //il codice è valido anche se viene scritto minuscolo
+    return arrayPromoCode.includes(upperCaseCode)
 }
 
 /**
