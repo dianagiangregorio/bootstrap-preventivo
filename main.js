@@ -37,59 +37,76 @@ const analysisHourPrice = 33.60
 calculatorForm.addEventListener('submit', function (event) {
     event.preventDefault();
 
-    //calcolo il prezzo orario per il tipo di lavoro selezionato dall'utente
+    // checkName(userName.value);
+    // checkName(userSurname.value);
 
-    let totalJobPrice = jobPrice (jobHours, backendHourPrice)
+    if (checkName(userName.value) === true && checkName(userSurname.value) === true && checkEmail(userEmail.value) === true) {
 
-    if (jobType.value === '1'){
-        totalJobPrice = jobPrice(jobHours, backendHourPrice);
-    }
-    else if (jobType.value === '2'){
-        totalJobPrice = jobPrice(jobHours, frontendHourPrice);
+
+
+        //calcolo il prezzo orario per il tipo di lavoro selezionato dall'utente
+
+        let totalJobPrice = jobPrice(jobHours, backendHourPrice)
+
+        if (jobType.value === '1') {
+            totalJobPrice = jobPrice(jobHours, backendHourPrice);
+        }
+        else if (jobType.value === '2') {
+            totalJobPrice = jobPrice(jobHours, frontendHourPrice);
+        }
+        else {
+            totalJobPrice = jobPrice(jobHours, analysisHourPrice);
+        }
+
+        //controllo se l'utente ha inserito un codice sconto e calcolo il prezzo finale
+
+
+        if (promoCode(validPromoCode, codeToCheck.value)) {
+            const finalPrice = totalJobPrice - ((totalJobPrice * 25) / 100);
+            const arrayPrice = (fixedPrice(finalPrice)).split(',');
+            price.innerHTML = `€ ${arrayPrice[0]}`;
+            decimals.innerHTML = `,${arrayPrice[1]}`;
+            priceContainer.classList.remove("d-none");
+
+
+        }
+        else if (codeToCheck.value === '') {
+            const finalPrice = fixedPrice(totalJobPrice);
+            const arrayPrice = finalPrice.split(',');
+            promoContainer.innerHTML = "Non hai inserito il codice";
+            price.innerHTML = `&euro; ${arrayPrice[0]}`;
+            decimals.innerHTML = `,${arrayPrice[1]}`;
+            console.log(`Non hai inserito il codice ${finalPrice}`);
+            priceContainer.classList.remove("d-none");
+        }
+        else {
+            const finalPrice = fixedPrice(totalJobPrice);
+            const arrayPrice = finalPrice.split(',');
+            promoContainer.innerHTML = "Il codice inserito non è corretto";
+            price.innerHTML = `€ ${arrayPrice[0]}`;
+            decimals.innerHTML = `,${arrayPrice[1]}`;
+            console.log(`Il codice inserito non è corretto ${finalPrice}`);
+            priceContainer.classList.remove("d-none");
+        }
+
+        // //dopo tutte le operazioni resetto il form
+        // userName.value = '';
+        // userSurname.value = '';
+        // userEmail.value = '';
+        // userTextArea.value = '';
+        // jobType.value = '';
+        // codeToCheck.value = '';
     }
     else {
-        totalJobPrice = jobPrice(jobHours, analysisHourPrice);
+        alert ('i campi inseriti non sono corretti')
     }
-        
-    //controllo se l'utente ha inserito un codice sconto e calcolo il prezzo finale
-
-
-    if (promoCode(validPromoCode, codeToCheck.value)) {
-        const finalPrice = totalJobPrice - ((totalJobPrice * 25)/100);
-        const arrayPrice = (fixedPrice(finalPrice)).split(',');
-        price.innerHTML = `€ ${arrayPrice[0]}`;
-        decimals.innerHTML = `,${arrayPrice[1]}`;
-        priceContainer.classList.remove("d-none");
-
-
-    }
-    else if (codeToCheck.value === '') {
-        const finalPrice = fixedPrice(totalJobPrice);
-        const arrayPrice = finalPrice.split(',');
-        promoContainer.innerHTML = "Non hai inserito il codice";
-        price.innerHTML = `€ ${arrayPrice[0]}`;
-        decimals.innerHTML = `,${arrayPrice[1]}`;
-        console.log(`Non hai inserito il codice ${finalPrice}`);
-        priceContainer.classList.remove("d-none");
-    }
-    else {
-        const finalPrice = fixedPrice(totalJobPrice);
-        const arrayPrice = finalPrice.split(',');
-        promoContainer.innerHTML = "Il codice inserito non è corretto";
-        price.innerHTML = `€ ${arrayPrice[0]}`;
-        decimals.innerHTML = `,${arrayPrice[1]}`;
-        console.log(`Il codice inserito non è corretto ${finalPrice}`);
-        priceContainer.classList.remove("d-none");
-    }
-
-    //dopo tutte le operazioni resetto il form
-    userName.value = '';
-    userSurname.value = '';
-    userEmail.value = '';
-    userTextArea.value = '';
-    jobType.value = '';
-    codeToCheck.value = '';
-
+        //dopo tutte le operazioni resetto il form
+        userName.value = '';
+        userSurname.value = '';
+        userEmail.value = '';
+        userTextArea.value = '';
+        jobType.value = '';
+        codeToCheck.value = '';
 })
 
 //FUNZIONI
@@ -101,7 +118,7 @@ calculatorForm.addEventListener('submit', function (event) {
  * @param {number} pricePerHour
  * @returns {number}
  */
-function jobPrice (hoursToJob, pricePerHour) {
+function jobPrice(hoursToJob, pricePerHour) {
     return totalJobPrice = hoursToJob * pricePerHour
 }
 
@@ -111,7 +128,7 @@ function jobPrice (hoursToJob, pricePerHour) {
  * @param {string} codeToCheck
  * @returns {boolean}
  */
-function promoCode (arrayPromoCode, codeToCheck) {
+function promoCode(arrayPromoCode, codeToCheck) {
     return arrayPromoCode.includes(codeToCheck)
 }
 
@@ -120,8 +137,32 @@ function promoCode (arrayPromoCode, codeToCheck) {
  * @param {number} price
  * @returns {string}
  */
-function fixedPrice (price) {
+function fixedPrice(price) {
     let correctPrice = price.toFixed(2);
     priceToString = correctPrice.toString().replace('.', ',')
     return priceToString
+}
+
+/**
+ * funzione per controllare se il nome è scritto correttamente
+ * @param {any} name
+ * @returns {boolean}
+ */
+function checkName(name) {
+    if (!(isNaN(name))) {
+        return false
+    }
+    return true
+}
+
+/**
+ * funzione per controllare se l'email inserita è corretta
+ * @param {any} email
+ * @returns {boolean}
+ */
+function checkEmail (email) {
+    if (!(email.includes('@'))){
+        return false
+    }
+    return true
 }
